@@ -5,7 +5,7 @@ export default function Layout() {
   const location = useLocation();
   const menuItems = [
     { icon: <Home size={18} />, label: 'Home', path: '/home' },
-    { icon: <Users size={18} />, label: 'Client Management', path: '/dashboard' },
+    { icon: <Users size={18} />, label: 'User Management', path: '/dashboard' },
   ];
 
   return (
@@ -66,7 +66,7 @@ export default function Layout() {
               <>
                 <span className="mx-2 text-gray-300">/</span>
                 <span className="text-gray-900 font-medium">
-                  {location.pathname === '/dashboard' ? 'Client Management' : ''}
+                  {location.pathname === '/dashboard' ? 'User Management' : ''}
                 </span>
               </>
             )}
