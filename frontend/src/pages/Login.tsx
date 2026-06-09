@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Building2, Eye, EyeOff } from 'lucide-react';
+import { API_LIST } from '../services/api-list';
+import { Users, Eye, EyeOff } from 'lucide-react';
 
 export default function Login() {
   const [email, setEmail] = useState('admin@test.com');
@@ -14,7 +15,7 @@ export default function Login() {
     setError('');
 
     try {
-      const res = await fetch('http://localhost:5000/api/auth/login', {
+      const res = await fetch(`http://localhost:5000/api${API_LIST.LOGIN}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),
@@ -24,7 +25,7 @@ export default function Login() {
 
       if (res.ok) {
         localStorage.setItem('token', data.token);
-        navigate('/dashboard');
+        navigate('/home');
       } else {
         setError(data.message || 'Login failed');
       }
@@ -39,13 +40,13 @@ export default function Login() {
         {/* Logo Section */}
         <div className="flex flex-col items-center mb-6">
           <div className="flex items-center gap-2 text-blue-500 mb-2">
-            <Building2 size={32} />
+            <Users size={32} />
             <div className="flex flex-col">
-              <span className="font-bold text-xl leading-none">Aishwarya</span>
-              <span className="font-medium text-sm leading-none">Infra</span>
+              <span className="font-bold text-xl leading-none">User</span>
+              <span className="font-medium text-sm leading-none">Management</span>
             </div>
           </div>
-          <h1 className="text-xl font-semibold text-gray-800">Aishwarya-Infra</h1>
+          <h1 className="text-xl font-semibold text-gray-800">User Management</h1>
         </div>
 
         {/* Tabs */}
@@ -110,7 +111,7 @@ export default function Login() {
       </div>
 
       <div className="fixed bottom-6 text-xs text-gray-400">
-        © 2026 Aishwarya-Infra private limited. All rights reserved.
+        © 2026 User Management. All rights reserved.
       </div>
     </div>
   );
