@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { API_LIST } from '../services/api-list';
 import UserFormPanel from '../components/UserFormPanel';
 import ConfirmDialog from '../components/ConfirmDialog';
-import { Pencil, Trash2, ArrowUp, ArrowDown, ArrowUpDown } from 'lucide-react';
+import { Pencil, Trash2, ArrowUp, ArrowDown, ArrowUpDown, Filter } from 'lucide-react';
 
 export default function Dashboard() {
   const [users, setUsers] = useState<any[]>([]);
@@ -13,8 +13,14 @@ export default function Dashboard() {
   const [totalRecords, setTotalRecords] = useState(0);
   const [search, setSearch] = useState('');
   const [debouncedSearch, setDebouncedSearch] = useState('');
+  const [genderFilter, setGenderFilter] = useState('All');
+  const [ageFilter, setAgeFilter] = useState('All');
   const [sortBy, setSortBy] = useState('createdAt');
   const [order, setOrder] = useState('DESC');
+
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const [tempGender, setTempGender] = useState('All');
+  const [tempAge, setTempAge] = useState('All');
 
   const [isPanelOpen, setIsPanelOpen] = useState(false);
   const [editingUser, setEditingUser] = useState<any>(null);
@@ -32,7 +38,7 @@ export default function Dashboard() {
       }
 
       setLoading(true);
-      const res = await fetch(`http://localhost:5000/api${API_LIST.USERS}?page=${page}&limit=10&q=${debouncedSearch}&sortBy=${sortBy}&order=${order}`, {
+      const res = await fetch(`http://localhost:5000/api${API_LIST.USERS}?page=${page}&limit=10&q=${debouncedSearch}&sortBy=${sortBy}&order=${order}&gender=${genderFilter}&ageRange=${ageFilter}`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -65,7 +71,7 @@ export default function Dashboard() {
   // Fetch immediately when dependencies change
   useEffect(() => {
     fetchUsers();
-  }, [page, debouncedSearch, sortBy, order]);
+  }, [page, debouncedSearch, sortBy, order, genderFilter, ageFilter]);
 
   const handleNextPage = () => {
     if (page < totalPages) setPage(page + 1);
@@ -163,12 +169,84 @@ export default function Dashboard() {
           <div className="relative">
             <input
               type="text"
-              placeholder="Search"
+              placeholder="Search by name/email"
               value={search}
               onChange={(e) => { setSearch(e.target.value); setPage(1); }}
               className="pl-8 pr-4 py-2 border border-gray-200 rounded-md text-sm focus:outline-none focus:ring-1 focus:ring-blue-500 w-64"
             />
             <svg className="absolute left-3 top-2.5 text-gray-400 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+          </div>
+          <div className="relative">
+            <button
+              onClick={() => {
+                setTempGender(genderFilter);
+                setTempAge(ageFilter);
+                setIsFilterOpen(!isFilterOpen);
+              }}
+              className="flex items-center gap-2 px-4 py-2 border border-gray-200 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 transition-colors focus:outline-none focus:ring-1 focus:ring-blue-500"
+            >
+              <Filter size={16} className="text-gray-500" />
+              Filters
+            </button>
+            
+            {isFilterOpen && (
+              <>
+                <div className="fixed inset-0 z-40" onClick={() => setIsFilterOpen(false)}></div>
+                <div className="absolute top-12 right-0 bg-white border border-gray-200 rounded-lg shadow-lg w-64 z-50">
+                  <div className="p-4 border-b border-gray-100">
+                    <h3 className="font-semibold text-gray-800 text-sm">Filters</h3>
+                  </div>
+                  <div className="p-4">
+                    <div className="mb-5">
+                      <h4 className="text-sm font-semibold text-gray-700 mb-3">Gender</h4>
+                      <div className="space-y-2.5">
+                        {['Male', 'Female'].map(g => (
+                          <label key={g} className="flex items-center gap-3 text-sm text-gray-600 cursor-pointer">
+                            <input 
+                              type="checkbox" 
+                              className="rounded border-gray-300 text-blue-600 focus:ring-blue-500 w-4 h-4"
+                              checked={tempGender === g}
+                              onChange={() => setTempGender(tempGender === g ? 'All' : g)}
+                            />
+                            {g}
+                          </label>
+                        ))}
+                      </div>
+                    </div>
+                    <div>
+                      <h4 className="text-sm font-semibold text-gray-700 mb-3">Age Range</h4>
+                      <div className="space-y-2.5">
+                        {['18-25', '26-35', '36-45', '46+'].map(a => (
+                          <label key={a} className="flex items-center gap-3 text-sm text-gray-600 cursor-pointer">
+                            <input 
+                              type="checkbox" 
+                              className="rounded border-gray-300 text-blue-600 focus:ring-blue-500 w-4 h-4"
+                              checked={tempAge === a}
+                              onChange={() => setTempAge(tempAge === a ? 'All' : a)}
+                            />
+                            {a}
+                          </label>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                  <div className="p-3 border-t border-gray-100 flex justify-between items-center bg-gray-50 rounded-b-lg">
+                    <button 
+                      onClick={() => { setTempGender('All'); setTempAge('All'); setGenderFilter('All'); setAgeFilter('All'); setPage(1); setIsFilterOpen(false); }}
+                      className="text-sm text-gray-500 hover:text-gray-700 font-medium"
+                    >
+                      Clear
+                    </button>
+                    <button 
+                      onClick={() => { setGenderFilter(tempGender); setAgeFilter(tempAge); setPage(1); setIsFilterOpen(false); }}
+                      className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-1.5 rounded-md text-sm font-medium transition-colors"
+                    >
+                      Apply
+                    </button>
+                  </div>
+                </div>
+              </>
+            )}
           </div>
           <button
             onClick={handleOpenCreate}

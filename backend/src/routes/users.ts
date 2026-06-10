@@ -28,6 +28,7 @@ router.get("/", async (req, res) => {
         const limit = parseInt(req.query.limit as string) || 10;
         const search = req.query.q as string;
         const gender = req.query.gender as string;
+        const ageRange = req.query.ageRange as string;
         const sortBy = (req.query.sortBy as string) || "createdAt";
         const order = (req.query.order as string)?.toUpperCase() === "ASC" ? "ASC" : "DESC";
 
@@ -36,11 +37,23 @@ router.get("/", async (req, res) => {
         const queryBuilder = userRepository.createQueryBuilder("user");
 
         if (search) {
-            queryBuilder.where("(user.name ILIKE :search OR user.email ILIKE :search)", { search: `%${search}%` });
+            queryBuilder.andWhere("(user.name ILIKE :search OR user.email ILIKE :search)", { search: `%${search}%` });
         }
 
         if (gender && gender !== "All") {
             queryBuilder.andWhere("user.gender = :gender", { gender });
+        }
+
+        if (ageRange && ageRange !== "All") {
+            if (ageRange === "18-25") {
+                queryBuilder.andWhere("user.age >= 18 AND user.age <= 25");
+            } else if (ageRange === "26-35") {
+                queryBuilder.andWhere("user.age >= 26 AND user.age <= 35");
+            } else if (ageRange === "36-45") {
+                queryBuilder.andWhere("user.age >= 36 AND user.age <= 45");
+            } else if (ageRange === "46+") {
+                queryBuilder.andWhere("user.age >= 46");
+            }
         }
 
         queryBuilder.orderBy(`user.${sortBy}`, order as "ASC" | "DESC");
