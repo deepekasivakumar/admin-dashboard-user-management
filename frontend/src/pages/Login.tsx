@@ -50,15 +50,6 @@ export default function Login() {
           <h1 className="text-xl font-semibold text-gray-800">User Management</h1>
         </div>
 
-        {/* Tabs */}
-        <div className="flex bg-gray-100 p-1 rounded-lg mb-6">
-          <button className="flex-1 py-2 text-sm font-medium text-blue-600 bg-white rounded-md shadow-sm">
-            Admin
-          </button>
-          <button className="flex-1 py-2 text-sm font-medium text-gray-500 hover:text-gray-700 rounded-md transition-colors">
-            Vendor
-          </button>
-        </div>
 
         {error && (
           <div className="bg-red-50 text-red-600 text-sm p-3 rounded-md mb-4 text-center">
@@ -111,9 +102,6 @@ export default function Login() {
         </form>
       </div>
 
-      <div className="fixed bottom-6 text-xs text-gray-400">
-        © 2026 User Management. All rights reserved.
-      </div>
     </div>
   );
 }
