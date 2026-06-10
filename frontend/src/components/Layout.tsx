@@ -1,6 +1,6 @@
 import { Outlet, NavLink, useLocation, useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
-import { Home, Users, ChevronDown, Bell, LogOut } from 'lucide-react';
+import { Home, Users, LogOut } from 'lucide-react';
 import ConfirmDialog from './ConfirmDialog';
 
 export default function Layout() {
