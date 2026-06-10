@@ -101,12 +101,8 @@ export default function Layout() {
             )}
           </div>
 
-          <div className="flex items-center gap-4">
-            <Bell size={18} className="text-gray-400" />
-            <div className="flex items-center gap-2">
-              <span className="text-sm font-medium">Admin</span>
-              <ChevronDown size={14} className="text-gray-400" />
-            </div>
+          <div className="flex items-center">
+            <span className="text-sm font-medium">Admin</span>
           </div>
         </header>
 
