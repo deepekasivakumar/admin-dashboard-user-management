@@ -1,5 +1,5 @@
 import { Outlet, NavLink, useLocation, useNavigate } from 'react-router-dom';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Home, Users, ChevronDown, Bell, LogOut } from 'lucide-react';
 import ConfirmDialog from './ConfirmDialog';
 
@@ -12,6 +12,13 @@ export default function Layout() {
     { icon: <Home size={18} />, label: 'Home', path: '/home' },
     { icon: <Users size={18} />, label: 'User Management', path: '/dashboard' },
   ];
+
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      navigate('/login');
+    }
+  }, [navigate]);
 
   return (
     <div className="flex h-screen bg-[#f8f9fc] font-sans">
