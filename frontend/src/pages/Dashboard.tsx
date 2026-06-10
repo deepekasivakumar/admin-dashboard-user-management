@@ -38,7 +38,8 @@ export default function Dashboard() {
       }
 
       setLoading(true);
-      const res = await fetch(`http://localhost:5000/api${API_LIST.USERS}?page=${page}&limit=10&q=${debouncedSearch}&sortBy=${sortBy}&order=${order}&gender=${genderFilter}&ageRange=${ageFilter}`, {
+      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+      const res = await fetch(`${apiUrl}${API_LIST.USERS}?page=${page}&limit=10&q=${debouncedSearch}&sortBy=${sortBy}&order=${order}&gender=${genderFilter}&ageRange=${ageFilter}`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -115,7 +116,8 @@ export default function Dashboard() {
     if (userToDelete === null) return;
     try {
       const token = localStorage.getItem('token');
-      await fetch(`http://localhost:5000/api${API_LIST.USERS}/${userToDelete}`, {
+      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+      await fetch(`${apiUrl}${API_LIST.USERS}/${userToDelete}`, {
         method: 'DELETE',
         headers: { 'Authorization': `Bearer ${token}` }
       });
@@ -132,7 +134,8 @@ export default function Dashboard() {
   const handleFormSubmit = async (data: any) => {
     try {
       const token = localStorage.getItem('token');
-      const url = editingUser ? `http://localhost:5000/api${API_LIST.USERS}/${editingUser.id}` : `http://localhost:5000/api${API_LIST.USERS}`;
+      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+      const url = editingUser ? `${apiUrl}${API_LIST.USERS}/${editingUser.id}` : `${apiUrl}${API_LIST.USERS}`;
       const method = editingUser ? 'PUT' : 'POST';
 
       const res = await fetch(url, {

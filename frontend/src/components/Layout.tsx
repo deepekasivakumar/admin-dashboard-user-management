@@ -1,8 +1,13 @@
-import { Outlet, NavLink, useLocation } from 'react-router-dom';
-import { Home, Users, ChevronDown, Bell } from 'lucide-react';
+import { Outlet, NavLink, useLocation, useNavigate } from 'react-router-dom';
+import { useState } from 'react';
+import { Home, Users, ChevronDown, Bell, LogOut } from 'lucide-react';
+import ConfirmDialog from './ConfirmDialog';
 
 export default function Layout() {
   const location = useLocation();
+  const navigate = useNavigate();
+  const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
+  const [isLogoutConfirmOpen, setIsLogoutConfirmOpen] = useState(false);
   const menuItems = [
     { icon: <Home size={18} />, label: 'Home', path: '/home' },
     { icon: <Users size={18} />, label: 'User Management', path: '/dashboard' },
@@ -44,13 +49,30 @@ export default function Layout() {
         </nav>
 
         {/* Bottom Profile toggle */}
-        <div className="p-4 flex justify-between items-center">
-          <div className="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center text-white font-bold text-sm">
-            A
+        <div className="relative p-4">
+          <div className="flex justify-between items-center cursor-pointer" onClick={() => setIsProfileMenuOpen(!isProfileMenuOpen)}>
+            <div className="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center text-white font-bold text-sm">
+              A
+            </div>
+            <button className="w-6 h-6 rounded-full bg-white shadow-sm flex items-center justify-center text-gray-400">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ transform: isProfileMenuOpen ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s' }}><path d="m15 18-6-6 6-6" /></svg>
+            </button>
           </div>
-          <button className="w-6 h-6 rounded-full bg-white shadow-sm flex items-center justify-center text-gray-400">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m15 18-6-6 6-6" /></svg>
-          </button>
+          
+          {isProfileMenuOpen && (
+            <div className="absolute bottom-16 left-4 right-4 bg-white border border-gray-100 rounded-lg shadow-lg overflow-hidden z-50">
+              <button 
+                onClick={() => {
+                  setIsProfileMenuOpen(false);
+                  setIsLogoutConfirmOpen(true);
+                }}
+                className="w-full flex items-center gap-3 px-4 py-3 text-sm text-red-600 hover:bg-red-50 transition-colors"
+              >
+                <LogOut size={16} />
+                <span className="font-medium">Logout</span>
+              </button>
+            </div>
+          )}
         </div>
       </aside>
 
@@ -87,6 +109,20 @@ export default function Layout() {
         </main>
 
       </div>
+
+      <ConfirmDialog
+        isOpen={isLogoutConfirmOpen}
+        title="Logout"
+        message="Are you sure you want to logout?"
+        onConfirm={() => {
+          localStorage.removeItem('token');
+          navigate('/login');
+        }}
+        onCancel={() => setIsLogoutConfirmOpen(false)}
+        confirmText="Logout"
+        cancelText="Cancel"
+        isDestructive={true}
+      />
     </div>
   );
 }
