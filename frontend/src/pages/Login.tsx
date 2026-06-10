@@ -91,9 +91,6 @@ export default function Login() {
             </div>
           </div>
 
-          <div className="flex justify-end">
-            <a href="#" className="text-xs text-blue-500 hover:underline">Forgot password</a>
-          </div>
 
           <button
             type="submit"
