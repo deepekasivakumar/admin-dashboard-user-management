@@ -12,19 +12,22 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-const PORT = process.env.PORT || 5000;
+AppDataSource.initialize()
+    .then(() => console.log("Connected to PostgreSQL (Neon) via TypeORM!"))
+    .catch(error => console.log("Database connection error: ", error));
 
-AppDataSource.initialize().then(() => {
-    console.log("Connected to PostgreSQL (Neon) via TypeORM!");
-    
-    app.get("/", (req, res) => {
-        res.send("API is running...");
-    });
+app.get("/", (req, res) => {
+    res.send("API is running...");
+});
 
-    app.use("/api/auth", authRoutes);
-    app.use("/api/users", userRoutes);
+app.use("/api/auth", authRoutes);
+app.use("/api/users", userRoutes);
 
+if (process.env.NODE_ENV !== 'production') {
+    const PORT = process.env.PORT || 5000;
     app.listen(PORT, () => {
         console.log(`Server is running on http://localhost:${PORT}`);
     });
-}).catch(error => console.log("Database connection error: ", error));
+}
+
+export default app;
